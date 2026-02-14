@@ -15,7 +15,12 @@ export async function processWithGemini(prompt: string, imageBase64?: string, au
 
     for (const modelName of modelNames) {
         try {
-            const model = genAI.getGenerativeModel({ model: modelName });
+            const model = genAI.getGenerativeModel({
+                model: modelName,
+                generationConfig: {
+                    responseMimeType: "application/json",
+                }
+            });
             const content: any[] = [prompt];
             if (imageBase64) {
                 content.push({
@@ -47,7 +52,13 @@ export async function processWithGemini(prompt: string, imageBase64?: string, au
 }
 
 export function extractJSON(text: string) {
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("Could not find valid JSON in AI response");
-    return JSON.parse(jsonMatch[0]);
+    try {
+        // First try direct parse in case it's pure JSON
+        return JSON.parse(text);
+    } catch (e) {
+        // Fallback to regex extraction for markdown blocks
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) throw new Error("Could not find valid JSON in AI response");
+        return JSON.parse(jsonMatch[0]);
+    }
 }

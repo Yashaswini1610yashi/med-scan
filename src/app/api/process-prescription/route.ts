@@ -49,6 +49,7 @@ export async function POST(req: Request) {
         - "schedule": Array of times in HH:mm format based on frequency.
 
         Format the output as a JSON object with a 'medicines' array.
+        If no medicines are found, return {"medicines": []}.
       `;
         } else if (audio) {
             console.log("Processing audio note:", audio.name, audio.type);
@@ -57,7 +58,7 @@ export async function POST(req: Request) {
         Identify the medicine name and provide a detailed report.
         ${personalizationContext}
 
-        Return a JSON object with EXACTLY these keys in a 'medicines' array:
+        For each medicine, return a JSON object with EXACTLY these keys in a 'medicines' array:
         - "name": Identified medicine name
         - "dosage": "See age-based recommendations"
         - "frequency": "As mentioned/Standard"
@@ -70,6 +71,7 @@ export async function POST(req: Request) {
         - "schedule": ["08:00", "20:00"] (Example default schedule).
 
         Format the output as a JSON object with a 'medicines' array.
+        If the audio is unclear or no medicine is mentioned, return {"medicines": []}.
       `;
         } else {
             console.log("Processing text lookup:", medicineName);
@@ -77,7 +79,7 @@ export async function POST(req: Request) {
         You are a pharmacist. Provide detailed information for the medicine: "${medicineName}".
         ${personalizationContext}
 
-        Return a JSON object with EXACTLY these keys in a 'medicines' array:
+        For each medicine, return a JSON object with EXACTLY these keys in a 'medicines' array:
         - "name": "${medicineName}"
         - "dosage": "See age-based recommendations"
         - "frequency": "Standard frequency"
@@ -90,6 +92,7 @@ export async function POST(req: Request) {
         - "schedule": ["08:00", "20:00"] (Example default schedule).
 
         Format the output as a JSON object with a 'medicines' array.
+        If "${medicineName}" is not a valid medicine, return {"medicines": []}.
       `;
         }
 

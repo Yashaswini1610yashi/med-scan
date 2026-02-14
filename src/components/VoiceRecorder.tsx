@@ -65,8 +65,14 @@ export default function VoiceRecorder({ onAudioCaptured, isIconOnly }: VoiceReco
             });
 
             if (!response.ok) {
-                const errData = await response.json();
-                throw new Error(errData.details || "Failed to process voice note");
+                let errorMsg = "Failed to process voice note";
+                try {
+                    const errData = await response.json();
+                    errorMsg = errData.details || errData.error || errorMsg;
+                } catch (e) {
+                    errorMsg = "Server encountered a critical error during processing.";
+                }
+                throw new Error(errorMsg);
             }
 
             const data = await response.json();
