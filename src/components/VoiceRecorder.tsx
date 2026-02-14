@@ -6,9 +6,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface VoiceRecorderProps {
     onAudioCaptured: (data: { medicines: any[] }) => void;
+    isIconOnly?: boolean;
 }
 
-export default function VoiceRecorder({ onAudioCaptured }: VoiceRecorderProps) {
+export default function VoiceRecorder({ onAudioCaptured, isIconOnly }: VoiceRecorderProps) {
     const [isRecording, setIsRecording] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -80,6 +81,40 @@ export default function VoiceRecorder({ onAudioCaptured }: VoiceRecorderProps) {
         }
     };
 
+    if (isIconOnly) {
+        return (
+            <div className="relative">
+                <AnimatePresence>
+                    {isRecording && (
+                        <motion.div
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1.5, opacity: 0.2 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            transition={{ repeat: Infinity, duration: 1.5, ease: "easeOut" }}
+                            className="absolute inset-0 bg-red-500 rounded-xl"
+                        />
+                    )}
+                </AnimatePresence>
+                <button
+                    onClick={isRecording ? stopRecording : startRecording}
+                    disabled={loading}
+                    className={`relative z-10 w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isRecording
+                        ? "bg-red-500 hover:bg-red-600 shadow-md shadow-red-100"
+                        : "bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-100 text-white"
+                        } disabled:opacity-50`}
+                >
+                    {loading ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : isRecording ? (
+                        <Square className="w-4 h-4 fill-current text-white" />
+                    ) : (
+                        <Mic className="w-5 h-5 text-white" />
+                    )}
+                </button>
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col items-center gap-4">
             <div className="relative">
@@ -99,8 +134,8 @@ export default function VoiceRecorder({ onAudioCaptured }: VoiceRecorderProps) {
                     onClick={isRecording ? stopRecording : startRecording}
                     disabled={loading}
                     className={`relative z-10 w-20 h-20 rounded-full flex items-center justify-center transition-all ${isRecording
-                            ? "bg-red-500 hover:bg-red-600 shadow-lg shadow-red-200"
-                            : "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200"
+                        ? "bg-red-500 hover:bg-red-600 shadow-lg shadow-red-200"
+                        : "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200"
                         } text-white disabled:opacity-50`}
                 >
                     {loading ? (

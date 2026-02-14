@@ -6,9 +6,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface PrescriptionScannerProps {
     onDataExtracted: (data: any) => void;
+    compact?: boolean;
 }
 
-export default function PrescriptionScanner({ onDataExtracted }: PrescriptionScannerProps) {
+export default function PrescriptionScanner({ onDataExtracted, compact }: PrescriptionScannerProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
@@ -46,6 +47,46 @@ export default function PrescriptionScanner({ onDataExtracted }: PrescriptionSca
             setLoading(false);
         }
     };
+
+    if (compact) {
+        return (
+            <div className="p-6 space-y-4">
+                <div className="relative group">
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        disabled={loading}
+                    />
+                    <div className={`
+                        relative border-2 border-dashed rounded-2xl p-8 transition-all
+                        ${loading ? 'bg-zinc-50 border-zinc-200' : 'bg-white border-blue-100 hover:border-blue-400'}
+                        flex flex-col items-center justify-center text-center space-y-3
+                    `}>
+                        {preview ? (
+                            <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+                                <img src={preview} alt="Preview" className="w-full h-full object-contain" />
+                                {loading && (
+                                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                                        <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <>
+                                <Upload className="w-6 h-6 text-blue-500" />
+                                <div className="space-y-0.5">
+                                    <p className="text-sm font-bold text-zinc-900">Upload Prescription</p>
+                                    <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-black">JPG, PNG, WEBP</p>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full max-w-2xl mx-auto p-6 space-y-8">
